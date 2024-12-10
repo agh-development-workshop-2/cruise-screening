@@ -25,9 +25,8 @@ function Login() {
         const result = await login(formData);
         if (result === true) {
             navigate('/');
-            alert('Logged in succesfully');
         } else {
-            alert('Loging in could not be completed');
+            alert('Something went wrong :c');
         }
     };
 
