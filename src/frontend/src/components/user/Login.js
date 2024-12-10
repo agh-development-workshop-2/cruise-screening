@@ -22,8 +22,13 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log('Login form submitted:', formData);
-        await login(formData);
-        navigate('/')
+        const result = await login(formData);
+        if (result === true) {
+            navigate('/');
+            alert('Logged in succesfully');
+        } else {
+            alert('Loging in could not be completed');
+        }
     };
 
     return (

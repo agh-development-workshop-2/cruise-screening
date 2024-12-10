@@ -26,8 +26,13 @@ function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log('Registration form submitted:', formData);
-        await register(formData);
-        navigate('/login')
+        const result = await register(formData);
+        if (result === true) {
+            navigate('/login')
+            alert('Account created succesfully');
+        } else {
+            alert('Registartion could not be completed');
+        }
     };
 
     return (

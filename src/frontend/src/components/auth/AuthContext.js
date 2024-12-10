@@ -6,16 +6,17 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem('user') != null);
     const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken') || null);
-    const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken') || null);
     const [user, setUser] = useState(localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null);
 
     const login = async (credentials) => {
         try {
             const response = await api.post('/login/', credentials);
+            if (response.status !== 200) {
+                throw response;
+            }
             const { access, refresh, user } = response.data;
 
             setAccessToken(access);
-            setRefreshToken(refresh);
             setUser(user);
             localStorage.setItem('accessToken', access);
             localStorage.setItem('refreshToken', refresh);
@@ -32,10 +33,13 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (credentials) => {
         try {
-            await api.post('/register/', credentials);
+            const response = await api.post('/register/', credentials);
+            if (response.status !== 201) {
+                throw response;
+            }
             return true;
         } catch (error) {
-            alert('Something went wrogn during registartion');
+            alert('Something went wrong during registartion');
             console.error(error);
         }
         return false;
@@ -43,15 +47,16 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         try {
-            await api.post('/logout/', {}, {
+            const response = await api.post('/logout/', {}, {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
                 },
             });
-
+            if (response.status !== 200) {
+                throw response;
+            }
             setIsAuthenticated(false);
             setAccessToken(null);
-            setRefreshToken(null);
             setUser(null);
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');

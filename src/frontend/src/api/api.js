@@ -5,21 +5,23 @@ const api = axios.create({
     withCredentials: true, 
 });
 
+function remove_user_data_and_redirect() {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    window.location.href = '/login';
+}
+
 // Handles 401 errors, tries to refresh the token, if it does not work, redirects to login
 api.interceptors.response.use(
     response => {
         return response;
     }, 
     async error => {
-        console.log("error", error);
         if (error.response.status === 401 && error.config && !error.config.__isRetryRequest) {
-            console.log("retry", error);
             error.config.__isRetryRequest = true;
             if(localStorage.getItem('user') == null) {
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('refreshToken');
-                localStorage.removeItem('user');
-                window.location.href = '/login';
+                remove_user_data_and_redirect();
             }
 
             const accessToken = localStorage.getItem('accessToken');
@@ -38,26 +40,17 @@ api.interceptors.response.use(
                         localStorage.setItem('refreshToken', response.data.refresh);
                         error.config.headers['Authorization'] = `Bearer ${response.data.access}`;
                     } catch (error) {
-                        localStorage.removeItem('accessToken');
-                        localStorage.removeItem('refreshToken');
-                        localStorage.removeItem('user');
-                        window.location.href = '/login';
+                        remove_user_data_and_redirect();
                     }
                 } else {
                     error.config.headers['Authorization'] = `Bearer ${accessToken}`;
                 }
                 error.config.__isRetryRequest = true;
-                console.log('repeat', error.config);
                 
                 return api(error.config);
             }
         } else if(error.response.status === 401) {
-            console.log("To login");
-            
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
-            localStorage.removeItem('user');
-            window.location.href = '/login';
+            remove_user_data_and_redirect();
         }
         return error;
     }

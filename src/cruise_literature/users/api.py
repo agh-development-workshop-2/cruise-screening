@@ -38,7 +38,7 @@ def login_request_api(request):
                 "username": user.username,
                 "email": user.email
             }
-        })
+        }, status=status.HTTP_200_OK)
     return Response({"error": "Invalid username or password."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
