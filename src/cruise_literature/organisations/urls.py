@@ -40,4 +40,9 @@ urlpatterns = [
         views.find_organisations,
         name="find_organisation",
     ),
+    path(
+        "api/find_organisations/<int:user_id>",
+        views.find_organisations,
+        name="find_organisation_api",
+    ),
 ]

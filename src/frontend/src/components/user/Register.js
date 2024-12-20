@@ -25,7 +25,6 @@ function Register() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Registration form submitted:', formData);
         const result = await register(formData);
         if (result === true) {
             navigate('/login')

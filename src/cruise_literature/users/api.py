@@ -3,11 +3,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
-from .serializers import RegisterSerializer
-from rest_framework.views import APIView
+from .serializers import RegisterSerializer, EditUserSerializer, UserProfileSerializer, LanguageSerializer, KnowledgeAreaSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from .models import Language, KnowledgeArea  
 
 # Register API
 @api_view(["POST"])
@@ -49,10 +47,47 @@ def logout_request_api(request):
     logout(request)
     return Response({"message": "Logged out successfully!"}, status=status.HTTP_200_OK)
 
-# Delete User API
-@api_view(["DELETE"])
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def user_profile_api(request):
+    user = request.user
+    serializer = UserProfileSerializer(user)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def edit_profile_api(request):
+    user = request.user
+    serializer = EditUserSerializer(instance=user, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Profile updated successfully!"}, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def delete_user_api(request):
     user = request.user
     user.delete()
-    return Response({"message": "Account deleted successfully!"}, status=status.HTTP_200_OK)
+    return Response({"message": "Account deleted successfully."}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+def get_languages(request):
+    """
+    Endpoint to fetch all available languages.
+    """
+    languages = Language.objects.all()
+    serializer = LanguageSerializer(languages, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def get_knowledge_areas(request):
+    """
+    Endpoint to fetch all available knowledge areas.
+    """
+    knowledge_areas = KnowledgeArea.objects.all()
+    serializer = KnowledgeAreaSerializer(knowledge_areas, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)

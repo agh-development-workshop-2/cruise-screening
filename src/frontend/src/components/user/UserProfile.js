@@ -1,124 +1,119 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Base from '../base/Base';
+import api from '../../api/api';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext';
 
-function UserProfile({ userId }) {
-    const [user, setUser] = useState(null);
-    const [userOrganisations, setUserOrganisations] = useState([]);
-    const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-    const [usernameInput, setUsernameInput] = useState('');
+const UserProfile = () => {
+  const [userData, setUserData] = useState({});
+  const [organizations, setOrganizations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const { accessToken, deleteAccount } = useAuth();
+  
 
-    useEffect(() => {
-        // Fetch user data (replace with your API endpoint)
-        // TODO
-    }, [userId]);
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const profileResponse = await api.get('/profile/', {
+            
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+          },
+        });
+        setUserData(profileResponse.data);
 
-    const handleDeleteAccount = () => {
-        if (usernameInput === user?.username) {
-            // Call API to delete the user
-            // TODO
-        }
+        const orgResponse = await api.get(`/find_organisations/${profileResponse.data.id}`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+          },
+        });
+        setOrganizations(orgResponse.data);
+        setLoading(false);
+      } catch (err) {
+        setError('Failed to load user profile or organizations.');
+        setLoading(false);
+      }
     };
+    fetchUserProfile();
+  }, []);
 
-    if (!user)  return (
+  const handleDeleteAccount = async () => {
+    if(deleteAccount()) {
+        alert('Account deleted successfully!');
+        navigate('/login')
+    } else {
+      setError('Failed to delete account.');
+    }
+  }
+
+  const to_edit = () => {
+    navigate("/edit_profile")
+  }
+
+  if (loading) {
+    return  (
         <Base>
-            <div className="max-w-3xl mx-auto p-6 bg-white border border-gray-200 rounded-lg shadow-lg my-12 flex justify-center items-center">
-                <div className="spinner is-centered animate-spin border-t-4 border-orange-600 border-solid rounded-full w-16 h-16"></div>
-            </div>
+        <div className="max-w-3xl mx-auto p-6 bg-white border border-gray-200 rounded-lg shadow-lg my-12 flex justify-center items-center">
+            <div className="spinner is-centered animate-spin border-t-4 border-orange-600 border-solid rounded-full w-16 h-16"></div>
+        </div>
         </Base>
     );
+  }
 
-    return (
-        <Base>
-            <div className="container">
-                <div className="columns is-centered">
-                    <div className="column is-half content">
-                        <h1 className="is-1">{user.username}</h1>
-                        <p><strong>Email:</strong> {user.email}</p>
-                        <p><strong>First name:</strong> {user.first_name}</p>
-                        <p><strong>Last name:</strong> {user.last_name}</p>
-                        <hr />
-                        <p><strong>Date of birth:</strong> {user.date_of_birth}</p>
-                        <p><strong>Location:</strong> {user.location}</p>
-                        <p><strong>Languages:</strong> {user.user_languages}</p>
-                        <p><strong>Knowledge areas:</strong> {user.user_knowledge_areas}</p>
-                        <p><strong>Allow personalised logging:</strong> {user.allow_logging ? 'Yes' : 'No'}</p>
-                        <div>
-                            <strong>User organisations:</strong>
-                            {userOrganisations.map((org) => (
-                                <a
-                                    key={org.id}
-                                    className="tag m-2"
-                                    href={`/view_organisation/${org.id}`}
-                                >
-                                    {org.title}
-                                </a>
-                            ))}
-                        </div>
-                        <hr />
-                        <a className="button is-link" href="/edit_user_profile">
-                            Edit user
-                        </a>
-                        <button
-                            className="button is-danger"
-                            onClick={() => setDeleteModalVisible(true)}
-                        >
-                            Delete user account
-                        </button>
-                    </div>
-                </div>
+  if (error) {
+    return <Base>{error}</Base>;
+  }
+
+  return (
+    <Base>
+      <div className="max-w-3xl mx-auto p-6 bg-white border border-gray-200 rounded-lg shadow-lg my-12">
+        <h1 className="text-3xl font-bold text-orange-600 text-center mb-8">User Profile</h1>
+        <div className="text-gray-800 text-base space-y-4">
+          <p><strong>Username:</strong> {userData.username}</p>
+          <p><strong>Email:</strong> {userData.email}</p>
+          <p><strong>First Name:</strong> {userData.first_name}</p>
+          <p><strong>Last Name:</strong> {userData.last_name}</p>
+          <p><strong>Date of Birth:</strong> {userData.date_of_birth || 'Not provided'}</p>
+          <p><strong>Location:</strong> {userData.location || 'Not provided'}</p>
+          <p><strong>Languages:</strong> {userData.languages?.map((x) => x.name).join(', ') || 'Not provided'}</p>
+          <p><strong>Knowledge Areas:</strong> {userData.knowledge_areas?.map((x) => x.name).join(', ') || 'Not provided'}</p>
+          <p><strong>Allow Logging:</strong> {userData.allow_logging ? 'Yes' : 'No'}</p>
+        </div>
+        <hr className="my-6" />
+        <div>
+          <h2 className="text-xl font-bold mb-4">Organizations</h2>
+          {organizations?.length > 0 ? (
+            <div className="flex flex-wrap">
+              {organizations.map((org) => (
+                <a
+                  key={org.id}
+                  href={`/view_organisation/${org.id}`}
+                  className="tag m-2 bg-orange-100 text-orange-600 px-3 py-1 rounded-full hover:bg-orange-200"
+                >
+                  {org.title}
+                </a>
+              ))}
             </div>
-
-            {deleteModalVisible && (
-                <div className="modal is-active">
-                    <div className="modal-background"></div>
-                    <div className="modal-card">
-                        <header className="modal-card-head">
-                            <p className="modal-card-title">
-                                Are you sure that you want to delete your user account?
-                            </p>
-                            <button
-                                className="delete"
-                                aria-label="close"
-                                onClick={() => setDeleteModalVisible(false)}
-                            ></button>
-                        </header>
-                        <section className="modal-card-body">
-                            <div className="block">
-                                This will delete all your data. This action cannot be undone.
-                                To confirm, please type your username: <strong>{user.username}</strong> below.
-                            </div>
-                            <div className="field">
-                                <div className="control">
-                                    <input
-                                        className="input"
-                                        type="text"
-                                        placeholder="Username"
-                                        value={usernameInput}
-                                        onChange={(e) => setUsernameInput(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-                        </section>
-                        <footer className="modal-card-foot">
-                            <button
-                                className="button is-danger"
-                                disabled={usernameInput !== user.username}
-                                onClick={handleDeleteAccount}
-                            >
-                                Yes, delete my user account
-                            </button>
-                            <button
-                                className="button ml-4"
-                                onClick={() => setDeleteModalVisible(false)}
-                            >
-                                Cancel
-                            </button>
-                        </footer>
-                    </div>
-                </div>
-            )}
-        </Base>
-    );
-}
+          ) : (
+            <p>No organizations found.</p>
+          )}
+        </div>
+        <div className="mt-8 flex space-x-4">
+          <a onClick={to_edit} className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition">
+            Edit Profile
+          </a>
+          <button
+            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
+            onClick={handleDeleteAccount}
+          >
+            Delete Account
+          </button>
+        </div>
+      </div>
+    </Base>
+  );
+};
 
 export default UserProfile;

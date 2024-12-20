@@ -70,8 +70,37 @@ export const AuthProvider = ({ children }) => {
         return false;
     };
 
+    const deleteAccount = async () => {
+          try {
+            const response = await api.post(
+                '/delete/',
+                {},
+                {
+                  headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+                }
+              );
+            if (response.status !== 200) {
+                throw response;
+            }
+            setIsAuthenticated(false);
+            setAccessToken(null);
+            setUser(null);
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('user');
+
+            return true;
+        } catch (error) {
+            alert('Something went wrong while logging out');
+            console.error(error);
+        }
+        return false;
+    }
+
     return (
-        <AuthContext.Provider value={{ user, login, logout, register, isAuthenticated}}>
+        <AuthContext.Provider value={{ user, login, logout, register, deleteAccount, isAuthenticated, accessToken}}>
             {children}
         </AuthContext.Provider>
     );
