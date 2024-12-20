@@ -17,5 +17,9 @@ urlpatterns = [
     path('api/login/', api.login_request_api, name='login'),
     path('api/logout/', api.logout_request_api, name='logout'),
     path('api/delete/', api.delete_user_api, name='delete_user'),
+    path('api/profile/', api.user_profile_api, name='user_profile'),
+    path('api/edit_profile/', api.edit_profile_api, name='edit_profile'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/languages/', api.get_languages, name='get_languages'),
+    path('api/knowledge_areas/', api.get_knowledge_areas, name='get_knowledge_areas'),
 ]

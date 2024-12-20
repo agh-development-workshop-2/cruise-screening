@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from .models import Language, KnowledgeArea
 
-User = get_user_model() 
+User = get_user_model()
 
 class RegisterSerializer(serializers.ModelSerializer):
     password1 = serializers.CharField(write_only=True, style={'input_type': 'password'})
@@ -39,3 +40,66 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+class LanguageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Language
+        fields = ['id', 'name', 'name_native', 'iso_639_1']
+
+class KnowledgeAreaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KnowledgeArea
+        fields = ['id', 'name', 'group']
+
+class EditUserSerializer(serializers.ModelSerializer):
+    languages = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Language.objects.all(), required=False
+    )
+    knowledge_areas = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=KnowledgeArea.objects.all(), required=False
+    )
+
+    class Meta:
+        model = User
+        fields = [
+            'first_name',
+            'last_name',
+            'email',
+            'date_of_birth',
+            'location',
+            'languages',
+            'knowledge_areas',
+            'allow_logging',
+        ]
+
+    def update(self, instance, validated_data):
+        # Handle ManyToMany relationships
+        if 'languages' in validated_data:
+            instance.languages.set(validated_data.pop('languages'))
+        if 'knowledge_areas' in validated_data:
+            instance.knowledge_areas.set(validated_data.pop('knowledge_areas'))
+
+        # Update standard fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    languages = LanguageSerializer(many=True, read_only=True)
+    knowledge_areas = KnowledgeAreaSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'date_of_birth',
+            'location',
+            'languages',
+            'knowledge_areas',
+            'allow_logging',
+        ]
