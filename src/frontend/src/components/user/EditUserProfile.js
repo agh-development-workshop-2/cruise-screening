@@ -4,6 +4,7 @@ import api from '../../api/api';
 import Base from '../base/Base';
 import { useNavigate } from 'react-router-dom';
 import MultipleSelection from "../utils/MultipleSelection";
+import { useAuth } from '../auth/AuthContext';
 
 const EditProfile = () => {
   const [formData, setFormData] = useState({
@@ -22,6 +23,7 @@ const EditProfile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { accessToken, deleteAccount } = useAuth();
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -29,7 +31,7 @@ const EditProfile = () => {
         // Fetch user profile data
         const profileResponse = await api.get('/profile/', {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            'Authorization': `Bearer ${accessToken}`,
           },
         });
 

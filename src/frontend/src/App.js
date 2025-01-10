@@ -10,6 +10,7 @@ import UserProfile from './components/user/UserProfile';
 import { AuthProvider } from './components/auth/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import EditUserProfile from './components/user/EditUserProfile';
+import LiteratureReviewList from './components/literature_reviews/Home';
 
 function App() {
   return (
@@ -27,6 +28,12 @@ function App() {
             element={
                 <ProtectedRoute>
                     <UserProfile />
+                </ProtectedRoute>
+            } />
+          <Route path="/literature-reviews"
+            element={
+                <ProtectedRoute>
+                    <LiteratureReviewList />
                 </ProtectedRoute>
             }/>
         </Routes>
