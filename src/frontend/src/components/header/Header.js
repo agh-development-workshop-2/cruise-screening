@@ -51,7 +51,7 @@ function Header({ messages, searchQuery, isSearchResultsPage }) {
                     </a>
 
                     {isAuthenticated && (
-                        <a href="/reviews">My reviews</a>
+                        <a href="/literature-reviews">My reviews</a>
                     )}
                     {user?.is_superuser && (
                         <a href="/organisations">Organisations</a>
@@ -93,7 +93,7 @@ function Header({ messages, searchQuery, isSearchResultsPage }) {
                                     <a href="/profile" className="navbar-item">
                                         My profile
                                     </a>
-                                    <a href="/reviews" className="navbar-item">
+                                    <a href="/literature-reviews" className="navbar-item">
                                         My reviews
                                     </a>
                                     <hr className="navbar-divider" />
