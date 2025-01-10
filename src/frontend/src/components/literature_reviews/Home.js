@@ -12,7 +12,6 @@ const LiteratureReviews = () => {
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const token = localStorage.getItem("accessToken"); // Assuming JWT is stored in localStorage
                 const response = await api.get("/literature-reviews/", {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}`, },
                 });
@@ -45,18 +44,18 @@ const LiteratureReviews = () => {
     return (
         <Base>
         <div>
-            <div className="card">
+            <div className="card p-4">
                 <div className="card-content">
                     <h1 className="title is-1">
                         My Literature Reviews
-                        <Link to="/create-new-review" className="button is-link ml-5 mt-3">
+                        <Link to="/literature-reviews/create" className="button is-link ml-5 mt-3">
                             Create new review
                         </Link>
                     </h1>
                 </div>
             </div>
 
-            <div className="card">
+            <div className="card p-4">
                 <div className="card-content">
                     {error && <p style={{ color: "red" }}>{error}</p>}
                     <table className="table is-striped is-fullwidth is-hoverable">
