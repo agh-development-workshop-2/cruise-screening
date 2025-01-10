@@ -29,6 +29,31 @@ class Article:
     pmid: Optional[str] = None
     arxiv_id: Optional[str] = None
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "url": self.url,
+            "pdf": self.pdf,
+            "snippet": self.snippet,
+            "abstract": self.abstract,
+            "authors": self.authors,
+            "publication_date": self.publication_date,
+            "publication_year": self.publication_year,
+            "urls": self.urls,
+            "venue": self.venue,
+            "keywords_snippet": self.keywords_snippet,
+            "keywords_rest": self.keywords_rest,
+            "CSO_keywords": self.CSO_keywords,
+            "n_references": self.n_references,
+            "n_citations": self.n_citations,
+            "semantic_scholar_id": self.semantic_scholar_id,
+            "core_id": self.core_id,
+            "doi": self.doi,
+            "pmid": self.pmid,
+            "arxiv_id": self.arxiv_id
+        }
+
 
 @dataclass()
 class WikipediaArticle:
@@ -41,6 +66,17 @@ class WikipediaArticle:
     content: str
     ambiguous: bool = True
     keywords: Optional[List[str]] = None
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "url": self.url,
+            "snippet": self.snippet,
+            "content": self.content,
+            "ambiguous": self.ambiguous,
+            "keywords": self.keywords
+        }
 
 
 @dataclass()
@@ -56,3 +92,15 @@ class Author:
     semantic_scholar_id: Optional[str] = None
     google_scholar_id: Optional[str] = None
     orcid_id: Optional[str] = None
+
+    def to_dict(self):
+        return {
+            "display_name": self.display_name,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "id": self.id,
+            "aminer_id": self.aminer_id,
+            "semantic_scholar_id": self.semantic_scholar_id,
+            "google_scholar_id": self.google_scholar_id,
+            "orcid_id": self.orcid_id
+        }
