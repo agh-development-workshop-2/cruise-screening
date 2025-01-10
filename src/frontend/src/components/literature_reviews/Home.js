@@ -95,8 +95,9 @@ const LiteratureReviews = () => {
                                     <td>{review.number_of_screened}</td>
                                     <td>{review.percentage_screened}%</td>
                                     <td>
-                                        {review.decisions_count[0]} / {review.decisions_count[1]} /{" "}
-                                        {review.decisions_count[2]}
+                                    {Array.isArray(review.decisions_count) && review.decisions_count.length >= 3
+                                        ? `${review.decisions_count[0]} / ${review.decisions_count[1]} / ${review.decisions_count[2]}`
+                                        : "N/A"}
                                     </td>
                                     <td>
                                         <Link to={`/manage-review/${review.id}`}>Settings</Link>

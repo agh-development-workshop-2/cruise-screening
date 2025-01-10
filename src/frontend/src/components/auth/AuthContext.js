@@ -34,7 +34,6 @@ export const AuthProvider = ({ children }) => {
     const register = async (credentials) => {
         try {
             const response = await api.post('/register/', credentials);
-            console.log(response);
             if (response.status !== 201) {
                 throw response;
             }

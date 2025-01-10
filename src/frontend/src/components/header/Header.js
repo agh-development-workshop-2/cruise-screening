@@ -37,7 +37,6 @@ function Header({ messages, searchQuery, isSearchResultsPage }) {
                     <a className="navbar__logo" href="/">
                         <img src="cruise-logo.png" width="60" height="60" alt="Cruise Logo" />
                     </a>
-
                     <a
                         role="button"
                         className="navbar-burger"
@@ -51,7 +50,7 @@ function Header({ messages, searchQuery, isSearchResultsPage }) {
                     </a>
 
                     {isAuthenticated && (
-                        <a href="/literature-reviews">My reviews</a>
+                        <a href="/literature-reviews" className="navbar-item">My reviews</a>
                     )}
                     {user?.is_superuser && (
                         <a href="/organisations">Organisations</a>
