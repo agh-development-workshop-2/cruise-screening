@@ -1,19 +1,41 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import WikipediaCard from '../wikipedia_card/WikipediaCard';
 import Card from '../card/Card';
+import axios from 'axios';
+
+const SEARCH_API_URL = process.env.REACT_APP_SEARCH_API_URL
+
 
 const SearchResultList = ({
                               searchQuery,
-                              matchedWikiPage,
-                              searchResultList,
-                              searchTime,
-                              uniqueSearches,
                               currentPage,
                               totalPages
                           }) => {
     const [currentPageState, setCurrentPageState] = useState(currentPage);
+    const [searchTime, setSearchTime] = useState(0);
+    const [uniqueSearches, setUniqueSearches] = useState(0);
+    const [searchResult, setSearchResult] = useState([]);
+    const [matchedWikiPage, setMatchedWikiPage] = useState();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        axios.get(SEARCH_API_URL + '/search', {
+            params: {
+                search_query: searchQuery
+            }
+        }).then(response => {
+            if (response) {
+                setSearchResult(response.data.search_result);
+                setSearchTime(response.data.search_time);
+                setUniqueSearches(response.data.unique_searches);
+                setMatchedWikiPage(response.data.matched_wiki_page);
+                setLoading(false)
+            }
+        })
+            .catch(function (error) {
+                // todo - handle request abort
+                console.error(error)
+            })
         setCurrentPageState(currentPage);
     }, [searchQuery, currentPage]);
 
@@ -26,18 +48,30 @@ const SearchResultList = ({
         <div className="search-results__list">
             <h2 className="title is-4 mb-1">Search results: {searchQuery}</h2>
 
+            {loading ? (
+                <div
+                    className="max-w-3xl mx-auto p-6 bg-white border border-gray-200 rounded-lg shadow-lg my-12 flex justify-center items-center">
+                    <div
+                        className="spinner is-centered animate-spin border-t-4 border-orange-600 border-solid rounded-full w-16 h-16">
+                    </div>
+                </div>
+            ) : (<></>
+            )}
+
             {matchedWikiPage && (
                 <WikipediaCard matchedWikiPage={matchedWikiPage}/>
             )}
 
-            {searchResultList && searchResultList.length > 0 ? (
+            {searchResult.length > 0 ? (
                 <>
                     <p className="mb-4">
                         Returned <strong>{uniqueSearches} unique search results</strong> ({searchTime} seconds)
                     </p>
-                    {searchResultList.map((searchResult, index) => (
-                        <Card key={index} searchResult={searchResult}/>
-                    ))}
+                    {searchResult.map((result, _) => {
+                        return (
+                            <Card key={result.id} searchResult={result}/>
+                        );
+                    })}
                 </>
             ) : (
                 <p>No search results are available ({searchTime} seconds)</p>

@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
-const Card = ({searchResult}) => {
+const Card = ({ resultKey, searchResult }) => {
     const [openAbstract, setOpenAbstract] = useState(false);
     const [openKeywords, setOpenKeywords] = useState(false);
 
@@ -9,7 +9,7 @@ const Card = ({searchResult}) => {
     };
 
     return (
-        <article className="card mb-4">
+        <article className="card mb-4" x-data="{ openAbstract: false, openKeywords: false, showCSOKeywords: false}">
             <div className="card-content pb-1">
                 <p className="title">
                     {searchResult.url ? (
@@ -19,22 +19,22 @@ const Card = ({searchResult}) => {
                     )}
                     {searchResult.pdf && (
                         <a href={searchResult.pdf}>
-                            <img src="pdf-icon.svg" width="25" height="25" alt="PDF"/>
+                            <img src="pdf-icon.svg" width="25" height="25" alt="PDF" />
                         </a>
                     )}
                 </p>
                 <p className="subtitle mb-2">{searchResult.authors}</p>
                 <p>
-          <span className="is-size-6 p-0 m-0 has-text-primary">
-            {searchResult.publication_date} - {searchResult.venue}
-          </span>
+                    <span className="is-size-6 p-0 m-0 has-text-primary">
+                        {searchResult.publication_date} - {searchResult.venue}
+                    </span>
                     {searchResult.doi && (
                         <span className="has-text-grey-light is-size-7">
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✦&nbsp;&nbsp;
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✦&nbsp;&nbsp;
                             <a href={`https://doi.org/${searchResult.doi}`} target="_blank" rel="noopener noreferrer">
-                {searchResult.doi}
-              </a>
-            </span>
+                                {searchResult.doi}
+                            </a>
+                        </span>
                     )}
                 </p>
             </div>
@@ -45,6 +45,7 @@ const Card = ({searchResult}) => {
                         openAbstract ? (
                             <p className="is-5">
                                 <strong>Abstract:</strong> {searchResult.abstract}
+                                <br />
                                 <button
                                     type="button"
                                     className="card__show-more"
@@ -53,9 +54,11 @@ const Card = ({searchResult}) => {
                                     Show less
                                 </button>
                             </p>
+
                         ) : (
                             <p className="is-5">
                                 <strong>Abstract:</strong> {truncateText(searchResult.abstract)}
+                                <br />
                                 <button
                                     type="button"
                                     className="card__show-more"
@@ -64,6 +67,7 @@ const Card = ({searchResult}) => {
                                     Show full abstract
                                 </button>
                             </p>
+
                         )
                     ) : searchResult.abstract ? (
                         <p className="is-5">
@@ -80,7 +84,8 @@ const Card = ({searchResult}) => {
                     )}
 
                     <p>
-                        {Object.entries(searchResult.keywords_snippet).map(([keyword, score]) => (
+                        {/* todo - potentially not working */}
+                        {searchResult.keywords_snippet?.map(([keyword, score]) => (
                             <a
                                 key={keyword}
                                 href={`?search_query=${encodeURIComponent(keyword)}&source=keywords`}
@@ -98,25 +103,27 @@ const Card = ({searchResult}) => {
 
                         {openKeywords && (
                             <>
-                <span>
-                  {Object.entries(searchResult.keywords_rest).map(([keyword, score]) => (
-                      <a
-                          key={keyword}
-                          href={`?search_query=${encodeURIComponent(keyword)}&source=keywords`}
-                          className={`button is-light is-small mb-2 ${score}`}
-                      >
-                          {keyword}
-                      </a>
-                  ))}
-                </span>
+                                <span>
+                                    {/* todo - potentially not working */}
+                                    {searchResult.keywords_rest?.map(([keyword, score]) => (
+                                        <a
+                                            key={keyword}
+                                            href={`?search_query=${encodeURIComponent(keyword)}&source=keywords`}
+                                            className={`button is-light is-small mb-2 ${score}`}
+                                        >
+                                            {keyword}
+                                        </a>
+                                    ))}
+                                </span>
                                 <button type="button" className="card__show-more"
-                                        onClick={() => setOpenKeywords(false)}>
+                                    onClick={() => setOpenKeywords(false)}>
                                     Show less
                                 </button>
                             </>
                         )}
                     </p>
 
+                    {/* todo - there are no citations and references in searchResult */}
                     <p className="has-text-info">
                         Cited
                         by {searchResult.citations} &nbsp;&nbsp; - &nbsp;&nbsp; {searchResult.references} references
@@ -124,7 +131,7 @@ const Card = ({searchResult}) => {
                 </div>
             </div>
         </article>
-    );
+    )
 };
 
 export default Card;

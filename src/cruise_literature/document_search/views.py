@@ -1,9 +1,11 @@
 import concurrent.futures
 import time
 
+import json
+
 from django.db.models import QuerySet
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.template.defaulttags import register
 
@@ -16,6 +18,7 @@ from .search_pubmed import search_pubmed
 from .search_wikipedia import search_wikipedia
 from .utils import paginate_results, merge_results, Articles
 from .models import SearchEngine
+from cruise_literature.settings import REACT_FRONTEND
 
 
 engine_logger = EngineLogger()
@@ -76,20 +79,31 @@ def search_results(request):
         matched_wiki_page=get_wiki_logger(matched_wiki_page),
     )
 
-    context = {
-        "search_result_list": search_result_list,
-        "matched_wiki_page": matched_wiki_page,
-        "unique_searches": len(search_result),
-        "search_time": f"{search_time:.2f}",
-        "search_query": search_query,
-        "search_type": "",
-        "paginator": paginator,
-    }
-    return render(
-        request=request,
-        template_name="document_search/plain_search.html",
-        context=context,
-    )
+    if REACT_FRONTEND:
+        context = {
+            "search_result": [r.to_dict() for r in search_result],
+            "matched_wiki_page": matched_wiki_page.to_dict(),
+            "unique_searches": len(search_result),
+            "search_time": f"{search_time:.2f}",
+            "search_query": search_query,
+            "search_type": "",
+        }
+        return HttpResponse(json.dumps(context), content_type='application/json')
+    else:
+        context = {
+            "search_result_list": search_result_list,
+            "matched_wiki_page": matched_wiki_page.to_dict(),
+            "unique_searches": len(search_result),
+            "search_time": f"{search_time:.2f}",
+            "search_query": search_query,
+            "search_type": "",
+            "paginator": paginator,
+        }
+        return render(
+            request=request,
+            template_name="document_search/plain_search.html",
+            context=context,
+        )
 
 
 def parallel_search(

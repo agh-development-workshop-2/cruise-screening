@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-function Header({ messages, searchQuery, isSearchResultsPage }) {
+function Header({ messages }) {
     const { isAuthenticated, user, logout } = useAuth();
     const navigate = useNavigate();
 
@@ -57,27 +57,6 @@ function Header({ messages, searchQuery, isSearchResultsPage }) {
                         <a href="/organisations">Organisations</a>
                     )}
                 </div>
-
-                {isSearchResultsPage && (
-                    <div className="navbar-menu is-active">
-                        <div className="navbar-start">
-                            <form id="search_box" className="search-small" method="GET" action="/search">
-                                <div className="search-small__input">
-                                    <input
-                                        type="search"
-                                        className="input mr-2"
-                                        name="search_query"
-                                        defaultValue={searchQuery}
-                                        placeholder="Search"
-                                        aria-label="Search"
-                                    />
-                                    <input type="hidden" name="source" value="reformulate_search" />
-                                    <button className="button is-primary">Search</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                )}
 
                 <div className="navbar-menu" id="userMenu">
                     <div className="navbar-end">
