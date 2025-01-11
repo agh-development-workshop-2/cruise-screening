@@ -9,7 +9,7 @@ function Home() {
     const handleSearch = (e) => {
         e.preventDefault();
         if (searchQuery.trim()) {
-            navigate(`/search?search_query=${encodeURIComponent(searchQuery)}&source=main_search`);
+            navigate(`/search?search_query=${encodeURIComponent(searchQuery)}&source=main_search&page=1`);
         }
     };
 

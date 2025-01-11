@@ -87,6 +87,7 @@ def search_results(request):
             "search_time": f"{search_time:.2f}",
             "search_query": search_query,
             "search_type": "",
+            "page_size": paginator.per_page
         }
         return HttpResponse(json.dumps(context), content_type='application/json')
     else:

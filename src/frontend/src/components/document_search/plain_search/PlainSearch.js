@@ -8,6 +8,7 @@ const PlainSearch = () => {
     const [searchParams] = useSearchParams();
     const searchQuery = searchParams.get('search_query');
     const source = searchParams.get('source');
+    const currentPage = searchParams.get('page');
 
     if (!searchQuery && !source) {
         return <Home/>;
@@ -17,7 +18,7 @@ const PlainSearch = () => {
         <Base title={`Cruise-literature: ${searchQuery || 'Search'}`}>
             <div className="search-results-one-column">
                 <div>
-                    <SearchResultList searchQuery={searchQuery} source={source}/>
+                    <SearchResultList searchQuery={searchQuery} source={source} currentPage={currentPage}/>
                 </div>
             </div>
         </Base>
