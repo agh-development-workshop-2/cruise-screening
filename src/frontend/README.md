@@ -8,7 +8,7 @@ Create `.env` file and set `SEARCH_API_URL` to the actual search API endpoint. B
 `http://localhost:8000`.
 
 ```ini
-SEARCH_API_URL=http://localhost:8000
+REACT_APP_SEARCH_API_URL=http://localhost:8000
 ```
 
 ## Available Scripts
