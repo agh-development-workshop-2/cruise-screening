@@ -112,7 +112,6 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = env("STATIC_ROOT")
-REACT_FRONTEND = env.bool("REACT_FRONTEND", default=False)
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
