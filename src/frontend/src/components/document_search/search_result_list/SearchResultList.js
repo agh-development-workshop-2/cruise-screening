@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import WikipediaCard from '../wikipedia_card/WikipediaCard';
-import axios from 'axios';
 import Card from "../card/Card";
-
-const SEARCH_API_URL = process.env.REACT_APP_SEARCH_API_URL
+import api from '../../../api/api';
 
 
 const SearchResultList = ({
@@ -19,26 +17,29 @@ const SearchResultList = ({
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get(SEARCH_API_URL + '/search', {
-            params: {
-                search_query: searchQuery
+        const fetchSearchResultList = async () => {
+            try {
+                return await api.get('/search', {
+                    params: {
+                        search_query: searchQuery
+                    }
+                });
+
+            } catch (err) {
+                console.error(err)
             }
-        }).then(response => {
-            if (response) {
-                setSearchResult(response.data.search_result);
-                setSearchTime(response.data.search_time);
-                setUniqueSearches(response.data.unique_searches);
-                setMatchedWikiPage(response.data.matched_wiki_page);
-                setPageSize(response.data.page_size);
-                setLoading(false);
-                setTotalPages(response.data.search_result.length > 0 ? Math.ceil(response.data.search_result.length / response.data.page_size) : 1)
-            }
-        })
-            .catch(function (error) {
-                // todo - handle request abort
-                console.error(error)
-            })
-        setCurrentPageState(Number(currentPage));
+        };
+
+        fetchSearchResultList().then(response => {
+            setSearchResult(response.data.search_result);
+            setSearchTime(response.data.search_time);
+            setUniqueSearches(response.data.unique_searches);
+            setMatchedWikiPage(response.data.matched_wiki_page);
+            setPageSize(response.data.page_size);
+            setLoading(false);
+            setTotalPages(response.data.search_result.length > 0 ? Math.ceil(response.data.search_result.length / response.data.page_size) : 1);
+            setCurrentPageState(Number(currentPage));
+        });
     }, [searchQuery, currentPage]);
 
     const handlePageChange = (page) => {
