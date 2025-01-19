@@ -37,7 +37,6 @@ function Header({ messages }) {
                     <a className="navbar__logo" href="/">
                         <img src="cruise-logo.png" width="60" height="60" alt="Cruise Logo" />
                     </a>
-
                     <a
                         role="button"
                         className="navbar-burger"
@@ -51,7 +50,7 @@ function Header({ messages }) {
                     </a>
 
                     {isAuthenticated && (
-                        <a href="/reviews">My reviews</a>
+                        <a href="/literature-reviews" className="navbar-item">My reviews</a>
                     )}
                     {user?.is_superuser && (
                         <a href="/organisations">Organisations</a>
@@ -72,7 +71,7 @@ function Header({ messages }) {
                                     <a href="/profile" className="navbar-item">
                                         My profile
                                     </a>
-                                    <a href="/reviews" className="navbar-item">
+                                    <a href="/literature-reviews" className="navbar-item">
                                         My reviews
                                     </a>
                                     <hr className="navbar-divider" />

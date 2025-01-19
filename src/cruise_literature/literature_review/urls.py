@@ -1,6 +1,5 @@
 from django.urls import path
-
-
+from .api import literature_review_list_api
 from . import views
 
 app_name = "literature_review"
@@ -36,4 +35,7 @@ urlpatterns = [
     path("add_review_member/<int:review_id>", views.add_review_member, name="add_review_member"),
     path("remove_review_member/<int:review_id>", views.remove_review_member, name="remove_review_member"),
     path("create_review/", views.create_new_review, name="create_new_review"),
+
+    # new frontend
+    path('api/literature-reviews/', literature_review_list_api, name='literature_review_list_api'),
 ]
