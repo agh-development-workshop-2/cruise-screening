@@ -11,6 +11,7 @@ import { AuthProvider } from './components/auth/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import EditUserProfile from './components/user/EditUserProfile';
 import LiteratureReviewList from './components/literature_reviews/Home';
+import PlainSearch from './components/document_search/plain_search/PlainSearch';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
                     <LiteratureReviewList />
                 </ProtectedRoute>
             }/>
+            <Route path="/search" element={<PlainSearch/>}/>
         </Routes>
       </Router>
       </AuthProvider>

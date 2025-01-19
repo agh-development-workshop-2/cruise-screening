@@ -263,3 +263,7 @@ search-results-one-column {
 .message {
     margin: 0 auto !important;
 }
+
+.active {
+  font-weight: bold;
+}
