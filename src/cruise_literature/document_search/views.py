@@ -1,11 +1,9 @@
 import concurrent.futures
 import time
 
-import json
-
 from django.db.models import QuerySet
 
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.template.defaulttags import register
 
@@ -18,8 +16,6 @@ from .search_pubmed import search_pubmed
 from .search_wikipedia import search_wikipedia
 from .utils import paginate_results, merge_results, Articles
 from .models import SearchEngine
-from cruise_literature.settings import REACT_FRONTEND
-
 
 engine_logger = EngineLogger()
 
@@ -45,6 +41,27 @@ def search_results(request):
     """
     Search results page
     """
+    matched_wiki_page, search_result, search_result_list, paginator, search_time, search_query = query_search_results(
+        request)
+
+    context = {
+        "search_result_list": search_result_list,
+        "matched_wiki_page": matched_wiki_page.to_dict(),
+        "unique_searches": len(search_result),
+        "search_time": f"{search_time:.2f}",
+        "search_query": search_query,
+        "search_type": "",
+        "paginator": paginator,
+    }
+
+    return render(
+        request=request,
+        template_name="document_search/plain_search.html",
+        context=context,
+    )
+
+
+def query_search_results(request):
     if request.method != "GET":
         return
     search_query = request.GET.get("search_query", None)
@@ -59,7 +76,7 @@ def search_results(request):
 
     search_engines = SearchEngine.objects.filter(is_available_for_search=True).all()
     with concurrent.futures.ThreadPoolExecutor(
-        max_workers=len(search_engines)
+            max_workers=len(search_engines)
     ) as executor:
         search_result: Articles = parallel_search(
             search_engines, executor, search_query, top_k
@@ -78,40 +95,14 @@ def search_results(request):
         search_time=search_time,
         matched_wiki_page=get_wiki_logger(matched_wiki_page),
     )
-
-    if REACT_FRONTEND:
-        context = {
-            "search_result": [r.to_dict() for r in search_result],
-            "matched_wiki_page": matched_wiki_page.to_dict(),
-            "unique_searches": len(search_result),
-            "search_time": f"{search_time:.2f}",
-            "search_query": search_query,
-            "search_type": "",
-            "page_size": paginator.per_page
-        }
-        return HttpResponse(json.dumps(context), content_type='application/json')
-    else:
-        context = {
-            "search_result_list": search_result_list,
-            "matched_wiki_page": matched_wiki_page.to_dict(),
-            "unique_searches": len(search_result),
-            "search_time": f"{search_time:.2f}",
-            "search_query": search_query,
-            "search_type": "",
-            "paginator": paginator,
-        }
-        return render(
-            request=request,
-            template_name="document_search/plain_search.html",
-            context=context,
-        )
+    return matched_wiki_page, search_result, search_result_list, paginator, search_time, search_query
 
 
 def parallel_search(
-    search_engines: QuerySet[SearchEngine],
-    executor: concurrent.futures.ThreadPoolExecutor,
-    search_query: str,
-    top_k: int,
+        search_engines: QuerySet[SearchEngine],
+        executor: concurrent.futures.ThreadPoolExecutor,
+        search_query: str,
+        top_k: int,
 ) -> Articles:
     """Search in parallel search engines and return the merged results.
     :param search_engines: list of search engines
