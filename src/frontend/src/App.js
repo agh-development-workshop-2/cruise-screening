@@ -11,7 +11,13 @@ import { AuthProvider } from './components/auth/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import EditUserProfile from './components/user/EditUserProfile';
 import LiteratureReviewList from './components/literature_reviews/Home';
+
+import Organisation from './components/organisations/view_organisation'; 
+import CreateOrganisation from './components/organisations/create_organisation'; 
+import AddMember from './components/organisations/add_member';
+import Organisations from './components/organisations/view_all_organisations';
 import PlainSearch from './components/document_search/plain_search/PlainSearch';
+
 
 function App() {
   return (
@@ -37,7 +43,41 @@ function App() {
                     <LiteratureReviewList />
                 </ProtectedRoute>
             }/>
-            <Route path="/search" element={<PlainSearch/>}/>
+          <Route path="/search" element={<PlainSearch/>}/>
+
+          <Route
+              path="/organisations"
+              element={
+                <ProtectedRoute>
+                  <Organisations/>
+                </ProtectedRoute>
+              }
+            />
+          <Route
+              path="/organisations/new"
+              element={
+                <ProtectedRoute>
+                  <CreateOrganisation />
+                </ProtectedRoute>
+              }
+            />
+          <Route 
+              path="/organisations/:id" 
+              element={
+                <ProtectedRoute>
+                  <Organisation />
+                </ProtectedRoute>
+              } 
+            />
+          <Route 
+              path="/organisations/:id/add-member" 
+              element={
+                <ProtectedRoute>
+                  <AddMember/>
+                </ProtectedRoute>
+              } 
+            />
+          
         </Routes>
       </Router>
       </AuthProvider>
