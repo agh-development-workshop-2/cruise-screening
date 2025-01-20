@@ -10,8 +10,9 @@ import UserProfile from './components/user/UserProfile';
 import { AuthProvider } from './components/auth/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import EditUserProfile from './components/user/EditUserProfile';
-import LiteratureReviewList from './components/literature_reviews/Home';
+import LiteratureReviewList from './components/literature_reviews/home/Home';
 import PlainSearch from './components/document_search/plain_search/PlainSearch';
+import CreateLiteratureReview from "./components/literature_reviews/create_literature_review/CreateLiteratureReview";
 
 function App() {
   return (
@@ -38,6 +39,11 @@ function App() {
                 </ProtectedRoute>
             }/>
             <Route path="/search" element={<PlainSearch/>}/>
+            <Route path="/literature-reviews/create" element={
+                <ProtectedRoute>
+                    <CreateLiteratureReview />
+                </ProtectedRoute>
+            } />
         </Routes>
       </Router>
       </AuthProvider>

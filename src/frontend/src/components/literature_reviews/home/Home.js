@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import api from '../../api/api';
-import Base from '../base/Base';
+import React, {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
+import api from '../../../api/api';
+import Base from '../../base/Base';
 
 const LiteratureReviews = () => {
     const [reviews, setReviews] = useState([]);
@@ -13,7 +13,7 @@ const LiteratureReviews = () => {
         const fetchReviews = async () => {
             try {
                 const response = await api.get("/literature-reviews/", {
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}`, },
+                    headers: {'Authorization': `Bearer ${localStorage.getItem('access_token')}`,},
                 });
                 setReviews(response.data);
             } catch (err) {
@@ -43,23 +43,23 @@ const LiteratureReviews = () => {
 
     return (
         <Base>
-        <div>
-            <div className="card p-4">
-                <div className="card-content">
-                    <h1 className="title is-1">
-                        My Literature Reviews
-                        <Link to="/literature-reviews/create" className="button is-link ml-5 mt-3">
-                            Create new review
-                        </Link>
-                    </h1>
+            <div>
+                <div className="card p-4">
+                    <div className="card-content">
+                        <h1 className="title is-1">
+                            My Literature Reviews
+                            <Link to="/literature-reviews/create" className="button is-link ml-5 mt-3">
+                                Create new review
+                            </Link>
+                        </h1>
+                    </div>
                 </div>
-            </div>
 
-            <div className="card p-4">
-                <div className="card-content">
-                    {error && <p style={{ color: "red" }}>{error}</p>}
-                    <table className="table is-striped is-fullwidth is-hoverable">
-                        <thead>
+                <div className="card p-4">
+                    <div className="card-content">
+                        {error && <p style={{color: "red"}}>{error}</p>}
+                        <table className="table is-striped is-fullwidth is-hoverable">
+                            <thead>
                             <tr>
                                 <th onClick={() => handleSort("id")}>Number</th>
                                 <th onClick={() => handleSort("title")}>Title</th>
@@ -73,8 +73,8 @@ const LiteratureReviews = () => {
                                 <th>Decisions (I / ? / E)</th>
                                 <th>Manage Review</th>
                             </tr>
-                        </thead>
-                        <tbody>
+                            </thead>
+                            <tbody>
                             {reviews.map((review, index) => (
                                 <tr key={review.id}>
                                     <th>{index + 1}</th>
@@ -95,21 +95,21 @@ const LiteratureReviews = () => {
                                     <td>{review.number_of_screened}</td>
                                     <td>{review.percentage_screened}%</td>
                                     <td>
-                                    {Array.isArray(review.decisions_count) && review.decisions_count.length >= 3
-                                        ? `${review.decisions_count[0]} / ${review.decisions_count[1]} / ${review.decisions_count[2]}`
-                                        : "N/A"}
+                                        {Array.isArray(review.decisions_count) && review.decisions_count.length >= 3
+                                            ? `${review.decisions_count[0]} / ${review.decisions_count[1]} / ${review.decisions_count[2]}`
+                                            : "N/A"}
                                     </td>
                                     <td>
                                         <Link to={`/manage-review/${review.id}`}>Settings</Link>
                                     </td>
                                 </tr>
                             ))}
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-            </div>
-            </Base>
+        </Base>
     );
 };
 

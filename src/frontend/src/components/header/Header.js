@@ -35,7 +35,7 @@ function Header({ messages }) {
             <nav className="navbar is-light navbar-height" role="navigation" aria-label="main navigation">
                 <div className="navbar-brand">
                     <a className="navbar__logo" href="/">
-                        <img src="cruise-logo.png" width="60" height="60" alt="Cruise Logo" />
+                        <img src="/cruise-logo.png" width={"60"} height={"60"} alt="Cruise Logo" />
                     </a>
                     <a
                         role="button"
@@ -43,6 +43,7 @@ function Header({ messages }) {
                         aria-label="menu"
                         aria-expanded="false"
                         data-target="userMenu"
+                        href="/#"
                     >
                         <span aria-hidden="true"></span>
                         <span aria-hidden="true"></span>
@@ -75,7 +76,7 @@ function Header({ messages }) {
                                         My reviews
                                     </a>
                                     <hr className="navbar-divider" />
-                                    <a onClick={handleLogout} className="navbar-item">
+                                    <a onClick={handleLogout} className="navbar-item" href="/#">
                                         Logout
                                     </a>
                                 </div>
