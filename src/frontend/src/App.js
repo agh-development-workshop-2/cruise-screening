@@ -16,6 +16,7 @@ import Organisation from './components/organisations/view_organisation';
 import CreateOrganisation from './components/organisations/create_organisation'; 
 import AddMember from './components/organisations/add_member';
 import Organisations from './components/organisations/view_all_organisations';
+import PlainSearch from './components/document_search/plain_search/PlainSearch';
 
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
                     <LiteratureReviewList />
                 </ProtectedRoute>
             }/>
+          <Route path="/search" element={<PlainSearch/>}/>
 
           <Route
               path="/organisations"
