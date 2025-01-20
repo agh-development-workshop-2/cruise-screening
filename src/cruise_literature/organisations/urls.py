@@ -1,6 +1,14 @@
 from django.urls import path
 
 from . import views
+from organisations.api import (
+    OrganisationListView,
+    OrganisationDetailView,
+    OrganisationMemberView,
+    LiteratureReviewView,
+    user_organisations,
+    UserSearchView
+)
 
 app_name = "organisations"
 urlpatterns = [
@@ -44,5 +52,19 @@ urlpatterns = [
         "api/find_organisations/<int:user_id>",
         views.find_organisations,
         name="find_organisation_api",
+    ),
+
+
+
+    path("api/organisations/", OrganisationListView.as_view(), name="organisation_list"),
+    path("api/organisations/<int:organisation_id>/", OrganisationDetailView.as_view(), name="organisation_detail"),
+    path("api/organisations/<int:organisation_id>/members/", OrganisationMemberView.as_view(), name="organisation_members"),
+    path("api/organisations/<int:organisation_id>/reviews/", LiteratureReviewView.as_view(), name="organisation_reviews"),
+    path("api/users/<int:user_id>/organisations/", user_organisations, name="user_organisations"),
+    path("api/users/search/", UserSearchView.as_view(), name="user_search"),
+    path(
+        "api/organisations/<int:organisation_id>/members/add/", 
+        OrganisationMemberView.as_view(), 
+        name="add_member_api"
     ),
 ]
